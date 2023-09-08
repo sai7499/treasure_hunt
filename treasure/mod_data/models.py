@@ -23,4 +23,5 @@ class QualifedStudents(Base):
     mobile = db.Column(db.String(64), nullable=False)
     email = db.Column(db.String(64), nullable=False)
     day = db.Column(db.String(64), nullable=False)
+    url = db.Column(db.String(64), nullable=False)
 

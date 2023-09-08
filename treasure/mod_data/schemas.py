@@ -23,5 +23,6 @@ class QualifedStudentsSchema(SQLAlchemySchema):
     mobile = auto_field()
     email = auto_field()
     day = auto_field()
+    url = auto_field()
 
         

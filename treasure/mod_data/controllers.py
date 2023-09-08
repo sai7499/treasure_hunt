@@ -4,7 +4,7 @@ from .models import Data, QualifedStudents
 from .schemas import DataSchema, QualifedStudentsSchema
 from flask import Blueprint, flash, g, redirect, request, session, make_response, jsonify
 from datetime import datetime, date
-
+import uuid
 mod_data = Blueprint('data', __name__, url_prefix='/treasure_hunt')
 
 # student input data
@@ -58,11 +58,14 @@ def submitData():
             print(len(data))
             if len(data) == 10:
                 print("pushing data to qualified table")
+
+
                 qualifed_data = QualifedStudents(
                     name=data[0]['name'],
                     email=data[0]['email'],
                     mobile=data[0]['mobile'],
-                    day = data[0]['day']
+                    day = data[0]['day'],
+                    url = name[:2] + email[:2] + mobile[:3] + day
                 )
                 db.session.add(qualifed_data)
                 db.session.commit()
