@@ -48,24 +48,30 @@ def submitData():
             db.session.add(record)
             db.session.commit()
 
+            print('*********')
+            url = uuid.uuid4()
+            print(url)
+            print('*********')
+
             #  checking whether the student completes all the question or not respective to particular day
 
             records = db.session.query(
-                Data.name, Data.mobile, Data.email, Data.qNo,Data.day).filter_by(mobile=mobile,day=day).all()
+                Data.name, Data.mobile, Data.email, Data.qNo, Data.day).filter_by(mobile=mobile, day=day).all()
             data_schema = DataSchema()
             data = data_schema.dump(records, many=True)
 
-            print(len(data))
+            # print(len(data))
             if len(data) == 10:
                 print("pushing data to qualified table")
-
 
                 qualifed_data = QualifedStudents(
                     name=data[0]['name'],
                     email=data[0]['email'],
                     mobile=data[0]['mobile'],
-                    day = data[0]['day'],
-                    url = name[:2] + email[:2] + mobile[:3] + day
+                    day=data[0]['day'],
+                    # url = name[:2] + email[:2] + mobile[:3] + day
+                    url=str(uuid.uuid4()),
+                    # print(url)
                 )
                 db.session.add(qualifed_data)
                 db.session.commit()
