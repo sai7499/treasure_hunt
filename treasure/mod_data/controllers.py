@@ -5,6 +5,7 @@ from .schemas import DataSchema, QualifedStudentsSchema
 from flask import Blueprint, flash, g, redirect, request, session, make_response, jsonify
 from datetime import datetime, date
 import uuid
+from ..new_mailsetup import email_send
 mod_data = Blueprint('data', __name__, url_prefix='/treasure_hunt')
 
 # student input data
@@ -75,7 +76,7 @@ def submitData():
                 )
                 db.session.add(qualifed_data)
                 db.session.commit()
-
+                email_send(email,4,'')
             return make_response(
                 jsonify(
                     {
