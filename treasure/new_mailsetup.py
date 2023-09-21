@@ -3,7 +3,8 @@ import smtplib  # Import smtplib for the actual sending function
 from email.message import EmailMessage  # Import the email modules we'll need
 from flask import Flask, request, url_for
 import codecs
-recipients = ['srikanth@xrmonk.com', 'saikrishna@themoe.com']
+# recipients = ['srikanth@xrmonk.com', 'saikrishna@themoe.com']
+recipients = ['saikrishna@themoe.com']
 
 # themoe_gmail_app_password = 'tfhuqepamclgetua'
 # themoe_gmail_id = 'support@themoe.com'
@@ -30,7 +31,8 @@ def email_send(email, choice, otp_code):
         msg['Subject'] = 'Qualifed student details'
 
         msg.set_content(
-            f'This {email} has registered for treasure hunt sucessfully.')
+            f'This {email} has registered for treasure hunt sucessfully. link -{otp_code}')
+
     else:
         print(f'Please enter correct details')
 

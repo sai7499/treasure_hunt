@@ -10,6 +10,9 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 # local host
 SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:root@123@localhost/treasure_hunt' #mysql://username:password@server/d
 
+# dev database url  
+SQLALCHEMY_DATABASE_URI = 'mysql+mysqlconnector://root:skyxr@dev@localhost/treasure_hunt' #mysql://username:password@server/d
+
 SQLALCHEMY_ENGINE_OPTIONS = {
     'connect_args': {
         'connect_timeout': 15

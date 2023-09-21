@@ -1,4 +1,5 @@
 from treasure import db
+import os
 from datetime import time, datetime
 from .models import Data, QualifedStudents
 from .schemas import DataSchema, QualifedStudentsSchema
@@ -6,6 +7,8 @@ from flask import Blueprint, flash, g, redirect, request, session, make_response
 from datetime import datetime, date
 import uuid
 from ..new_mailsetup import email_send
+# from  ...config import url_vm
+url_vm = 'http://143.110.244.231/'
 mod_data = Blueprint('data', __name__, url_prefix='/treasure_hunt')
 
 # student input data
@@ -76,7 +79,37 @@ def submitData():
                 )
                 db.session.add(qualifed_data)
                 db.session.commit()
-                email_send(email,4,'')
+                # email_send(email,4,'')
+
+            path = '/var/www/html/' + str(url)
+
+            # check whether directory already exists
+            if not os.path.exists(path):
+                 os.mkdir(path)
+                 print("Folder %s created!" % path)
+            else:
+                print("Folder %s already exists" % path)
+
+
+            # Creating the HTML file
+            file_name = path + '/' + name + ".html"
+            file_html = open(file_name, "w")
+
+            # Adding the input data to the HTML file
+            file_html.write('''<html>
+            <head>
+            <title>HTML File</title>
+            </head> 
+            <body>
+            <h1>Welcome Finxters</h1>           
+            <p>Example demonstrating How to generate HTML Files in Python</p> 
+            </body>
+            </html>''')
+
+            # Saving the data into the HTML file
+            file_html.close()
+            url_to_send = url_vm + str(url) + '/' + name + '.html'
+            email_send(email,4,url_to_send)
             return make_response(
                 jsonify(
                     {
