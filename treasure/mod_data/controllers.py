@@ -41,16 +41,35 @@ def submitData():
             error = "Please enter all required fields."
 
         elif error is None:
-            record = Data(
-                name=name,
-                mobile=mobile,
-                email=email,
-                qNo=qNo,
-                status=status,
-                day=day
-            )
-            db.session.add(record)
-            db.session.commit()
+
+            #  checking whether the student already has completed the question or not
+
+            eixisting_record = Data.query.filter_by(name=name,email=email,mobile=mobile,qNo=qNo,day=day).first()
+
+            if eixisting_record:
+                print('record found')
+                eixisting_record.name = name
+                eixisting_record.email = email
+                eixisting_record.mobile = mobile
+                eixisting_record.qNo = qNo
+                eixisting_record.status = status
+                eixisting_record.day = day
+
+                db.session.commit()
+
+
+            else:
+
+                record = Data(
+                    name=name,
+                    mobile=mobile,
+                    email=email,
+                    qNo=qNo,
+                    status=status,
+                    day=day
+                )
+                db.session.add(record)
+                db.session.commit()
 
             print('*********')
             url = uuid.uuid4()
@@ -61,13 +80,13 @@ def submitData():
 
             records = db.session.query(
                 Data.name, Data.mobile, Data.email, Data.qNo, Data.day).filter_by(mobile=mobile, day=day).all()
+            
             data_schema = DataSchema()
             data = data_schema.dump(records, many=True)
 
             # print(len(data))
-            if len(data) == 10:
+            if len(data) == 10 and not QualifedStudents.query.filter_by(name=name,email=email,mobile=mobile,day=day).first():
                 print("pushing data to qualified table")
-
                 qualifed_data = QualifedStudents(
                     name=data[0]['name'],
                     email=data[0]['email'],
@@ -80,6 +99,7 @@ def submitData():
                 db.session.add(qualifed_data)
                 db.session.commit()
                 # email_send(email,4,'')
+
 
             path = '/var/www/html/' + str(url)
 
@@ -98,12 +118,42 @@ def submitData():
             # Adding the input data to the HTML file
             file_html.write('''<html>
             <head>
-            <title>HTML File</title>
+            <title>Student Details</title>
             </head> 
             <body>
-            <h1>Welcome Finxters</h1>           
-            <p>Example demonstrating How to generate HTML Files in Python</p> 
+                email:{{email}}
+                    
+            <h1>Welcome </h1>           
+            <p>Example demonstrating How to generate HTML Files in Python</p>
+                            
+            <h2> Sentence Validation</h2>
+
+            <p>Please input the sentence after combining all the words:</p>
+
+            <input id="numb">
+
+            <button type="button" onclick="myFunction()">Submit</button>
+
+            <p id="demo"></p>
+
+            <script>
+            function myFunction() {
+            // Get the value of the input field with id="numb"
+            let x = document.getElementById("numb").value;
+            let y = 'This is The Best Course On This Planet At Present';
+            // If x is Not a Number or less than one or greater than 10
+            let text;
+            if (x==y) {
+                text = "correct Answer";
+            } else {
+                text = "Incorrect Answer please try again";
+            }
+            document.getElementById("demo").innerHTML = text;
+            }
+            </script>
+                             
             </body>
+                                 
             </html>''')
 
             # Saving the data into the HTML file

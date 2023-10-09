@@ -37,7 +37,7 @@ def email_send(email, choice, otp_code):
         print(f'Please enter correct details')
 
     # the recipient's email address
-    msg['From'] = 'TheMoe <support@themoe.com>'
+    msg['From'] = 'XR MONK <support@xrmonk.com>'
     # msg['To'] = f'{email}'  # the sender's email address
     # for sending mail to  multiple recipients
     msg['To'] = ", ".join(recipients)
