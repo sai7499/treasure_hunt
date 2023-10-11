@@ -44,7 +44,8 @@ def submitData():
 
             #  checking whether the student already has completed the question or not
 
-            eixisting_record = Data.query.filter_by(name=name,email=email,mobile=mobile,qNo=qNo,day=day).first()
+            eixisting_record = Data.query.filter_by(
+                name=name, email=email, mobile=mobile, qNo=qNo, day=day).first()
 
             if eixisting_record:
                 print('record found')
@@ -57,8 +58,8 @@ def submitData():
 
                 db.session.commit()
 
-
             else:
+                print('record not found')
 
                 record = Data(
                     name=name,
@@ -71,21 +72,24 @@ def submitData():
                 db.session.add(record)
                 db.session.commit()
 
-            print('*********')
+            print('***uuid starts here******')
             url = uuid.uuid4()
             print(url)
-            print('*********')
+            print('****uuid ends here*****')
 
             #  checking whether the student completes all the question or not respective to particular day
 
             records = db.session.query(
                 Data.name, Data.mobile, Data.email, Data.qNo, Data.day).filter_by(mobile=mobile, day=day).all()
-            
+
             data_schema = DataSchema()
             data = data_schema.dump(records, many=True)
 
-            # print(len(data))
-            if len(data) == 10 and not QualifedStudents.query.filter_by(name=name,email=email,mobile=mobile,day=day).first():
+            print(len(data),'data')
+
+
+            # checking if user completes all the questions starts here 
+            if len(data) == 10 and not QualifedStudents.query.filter_by(name=name, email=email, mobile=mobile, day=day).first():
                 print("pushing data to qualified table")
                 qualifed_data = QualifedStudents(
                     name=data[0]['name'],
@@ -100,66 +104,68 @@ def submitData():
                 db.session.commit()
                 # email_send(email,4,'')
 
+                path = '/var/www/html/' + str(url)
 
-            path = '/var/www/html/' + str(url)
+                # check whether directory already exists
+                if not os.path.exists(path):
+                    os.mkdir(path)
+                    print("Folder %s created!" % path)
+                else:
+                    print("Folder %s already exists" % path)
 
-            # check whether directory already exists
-            if not os.path.exists(path):
-                 os.mkdir(path)
-                 print("Folder %s created!" % path)
-            else:
-                print("Folder %s already exists" % path)
+                # Creating the HTML file
+                file_name = path + '/' + name + ".html"
+                file_html = open(file_name, "w")
 
+                # Adding the input data to the HTML file
+                file_html.write('''<html>
+                <head>
+                <title>Student Details</title>
+                </head> 
+                <body>
+                    email:{{email}}
+                        
+                <h1>Welcome </h1>           
+                <p>Example demonstrating How to generate HTML Files in Python</p>
+                                
+                <h2> Sentence Validation</h2>
 
-            # Creating the HTML file
-            file_name = path + '/' + name + ".html"
-            file_html = open(file_name, "w")
+                <p>Please input the sentence after combining all the words:</p>
 
-            # Adding the input data to the HTML file
-            file_html.write('''<html>
-            <head>
-            <title>Student Details</title>
-            </head> 
-            <body>
-                email:{{email}}
-                    
-            <h1>Welcome </h1>           
-            <p>Example demonstrating How to generate HTML Files in Python</p>
-                            
-            <h2> Sentence Validation</h2>
+                <input id="numb">
 
-            <p>Please input the sentence after combining all the words:</p>
+                <button type="button" onclick="myFunction()">Submit</button>
 
-            <input id="numb">
+                <p id="demo"></p>
 
-            <button type="button" onclick="myFunction()">Submit</button>
+                <script>
+                function myFunction() {
+                // Get the value of the input field with id="numb"
+                let x = document.getElementById("numb").value;
+                let y = 'This is The Best Course On This Planet At Present';
+                
+                let text;
+                if (x==y) {
+                    text = "correct Answer";
+                } else {
+                    text = "Incorrect Answer please try again";
+                }
+                document.getElementById("demo").innerHTML = text;
+                }
+                </script>
+                                
+                </body>
+                                    
+                </html>''')
 
-            <p id="demo"></p>
+                # Saving the data into the HTML file
+                file_html.close()
+                url_to_send = url_vm + str(url) + '/' + name + '.html'
 
-            <script>
-            function myFunction() {
-            // Get the value of the input field with id="numb"
-            let x = document.getElementById("numb").value;
-            let y = 'This is The Best Course On This Planet At Present';
-            // If x is Not a Number or less than one or greater than 10
-            let text;
-            if (x==y) {
-                text = "correct Answer";
-            } else {
-                text = "Incorrect Answer please try again";
-            }
-            document.getElementById("demo").innerHTML = text;
-            }
-            </script>
-                             
-            </body>
-                                 
-            </html>''')
+                # sending an email to the respective admin about the user actions
+                email_send(email, 4, url_to_send)
 
-            # Saving the data into the HTML file
-            file_html.close()
-            url_to_send = url_vm + str(url) + '/' + name + '.html'
-            email_send(email,4,url_to_send)
+                # checking if user completes all the questions ends here 
             return make_response(
                 jsonify(
                     {
