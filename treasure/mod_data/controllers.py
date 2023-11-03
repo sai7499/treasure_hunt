@@ -122,9 +122,7 @@ def submitData():
                 <head>
                 <title>Student Details</title>
                 </head> 
-                <body>
-                    email:{{email}}
-                        
+                <body>  
                 <h1>Welcome </h1>           
                 <p>Example demonstrating How to generate HTML Files in Python</p>
                                 
@@ -152,11 +150,18 @@ def submitData():
                 }
                 document.getElementById("demo").innerHTML = text;
                 }
+                
+                var path = window.location.pathname;
+                var page = path.split("/").pop();
+                var stu_name = page.split(".")[0]
+                console.log('student name == ',stu_name);
                 </script>
+                <p>fileName</p>
                                 
                 </body>
                                     
                 </html>''')
+
 
                 # Saving the data into the HTML file
                 file_html.close()
@@ -185,3 +190,21 @@ def submitData():
     return make_response(
         jsonify({"status": "fail", "message": "Check method type.", "data": ""})
     )
+
+
+'''
+
+@mod_data.route("/getDetails",methods = "POST")
+def getDetails():
+
+    if request.method == "POST":
+        try:
+
+            name = request.form['name']
+
+            existing_record = Data.query.filter_by(
+                name=name).first()
+            
+            if existing_record :
+            
+'''
