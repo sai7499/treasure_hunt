@@ -119,48 +119,96 @@ def submitData():
 
                 # Adding the input data to the HTML file
                 file_html.write('''<html>
-                <head>
-                <title>Student Details</title>
-                </head> 
-                <body>  
-                <h1>Welcome </h1>           
-                <p>Example demonstrating How to generate HTML Files in Python</p>
-                                
-                <h2> Sentence Validation</h2>
 
-                <p>Please input the sentence after combining all the words:</p>
+<body>
+    <h1>Welcome </h1>
 
-                <input id="numb">
+    <h1 id="student_name"></h1>
 
-                <button type="button" onclick="myFunction()">Submit</button>
 
-                <p id="demo"></p>
 
-                <script>
-                function myFunction() {
-                // Get the value of the input field with id="numb"
-                let x = document.getElementById("numb").value;
-                let y = 'This is The Best Course On This Planet At Present';
-                
-                let text;
-                if (x==y) {
-                    text = "correct Answer";
-                } else {
-                    text = "Incorrect Answer please try again";
-                }
-                document.getElementById("demo").innerHTML = text;
-                }
-                
-                var path = window.location.pathname;
-                var page = path.split("/").pop();
-                var stu_name = page.split(".")[0]
-                console.log('student name == ',stu_name);
-                </script>
-                <p>fileName</p>
-                                
-                </body>
-                                    
-                </html>''')
+    <!-- <h2> Sentence Validation</h2> -->
+
+
+    <form>
+        
+        <label for="name">First name:</label><br>
+        <input type="text" id="name" name="name" disabled><br>
+        <label for="email">email:</label><br>
+        <input type="text" id="email" name="email" disabled><br><br>
+        <label for="mobile">mobile:</label><br>
+        <input type="text" id="mobile" name="mobile" disabled><br><br>
+    </form>
+
+    <p>Please input the sentence after combining all the words:</p>
+
+    <input id="numb">
+
+    <button type="button" onclick="myFunction()">Submit</button>
+    <p id="demo"></p>
+
+    <script>
+        // disp = false
+        function submit(){
+            alert('name')
+        }
+
+        function myFunction() {
+            // Get the value of the input field with id="numb"
+            let x = document.getElementById("numb").value;
+            let y = 'This is The Best Course On This Planet At Present';
+
+            let text;
+            if (x == y) {
+                text = "correct Answer";
+            } else {
+                text = "Incorrect Answer please try again";
+            }
+            document.getElementById("demo").innerHTML = text;
+        }
+
+        var path = window.location.pathname;
+        var page = path.split("/").pop();
+        var stu_name = page.split(".")[0]
+        console.log('student name == ', stu_name);
+        document.getElementById("student_name").innerHTML = stu_name;
+
+        url = "http://143.110.244.231:5002/treasure_hunt/getDetails"
+
+
+
+        async function UserAction() {
+            const data = { name: stu_name };
+            try {
+                const response = await fetch(url, {
+                    method: "POST", // or 'PUT'
+                    headers: {
+                        "Content-type": "application/json",
+                    },
+                    body: JSON.stringify(data),
+                });
+
+                const result = await response.json();
+                name = result['data']['name']
+                email = result['data']['email']
+                mobile = result['data']['mobile']
+                document.getElementById("name").innerHTML = name;
+                document.getElementById("email").innerHTML = email;
+                document.getElementById("mobile").innerHTML = mobile;
+                // disp = false
+                console.log("Success:", mobile);
+            } catch (error) {
+                console.error("Error:", error);
+            }
+        }
+        UserAction()
+
+
+    </script>
+
+</body>
+
+</html>''')
 
 
                 # Saving the data into the HTML file
@@ -192,19 +240,54 @@ def submitData():
     )
 
 
-'''
+# api to get the student data based on student name
 
-@mod_data.route("/getDetails",methods = "POST")
+@mod_data.route("/getDetails",methods=("GET", "POST"))
 def getDetails():
-
+    print('request',request)
     if request.method == "POST":
-        try:
-
-            name = request.form['name']
-
+            name = request.json['name']
+            print('request',request.json['name'])
+            # name = 'test'
+            # print('name',name)
             existing_record = Data.query.filter_by(
                 name=name).first()
-            
+
             if existing_record :
+
+                print('record found')
+
+                stu_email = existing_record.email
+                stu_mobile = existing_record.mobile
+                
+            else :
+                print('record not found')
+                res_data = {'email': '','name':name,'mobile':''}
+                return make_response(
+                jsonify(
+                    {
+                        "status": "fail",
+                        # "message": "data fetched successfully",
+                        "data": res_data
+                    }
+                )
+            )
+                
+                
+            res_data = {'email': stu_email,'name':name,'mobile':stu_mobile}
+            print(res_data)
+            return make_response(
+                jsonify(
+                    {
+                        "status": "success",
+                        # "message": "data fetched successfully",
+                        "data": res_data
+                    }
+                )
+            )
             
-'''
+
+    return make_response(
+        jsonify({"status": "fail", "message": "Check method type.", "data": ""})
+    )
+    
