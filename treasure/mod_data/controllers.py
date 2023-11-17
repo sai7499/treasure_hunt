@@ -44,17 +44,18 @@ def submitData():
 
             #  checking whether the student already has completed the question or not
 
-            eixisting_record = Data.query.filter_by(
+            existing_record = Data.query.filter_by(
                 name=name, email=email, mobile=mobile, qNo=qNo, day=day).first()
 
-            if eixisting_record:
+            if existing_record:
                 print('record found')
-                eixisting_record.name = name
-                eixisting_record.email = email
-                eixisting_record.mobile = mobile
-                eixisting_record.qNo = qNo
-                eixisting_record.status = status
-                eixisting_record.day = day
+                existing_record.name = name
+                existing_record.email = email
+                existing_record.mobile = mobile
+                existing_record.qNo = qNo
+                existing_record.status = status
+                existing_record.day = day
+                # existing_record.is_answered = is_answered
 
                 db.session.commit()
 
@@ -67,7 +68,8 @@ def submitData():
                     email=email,
                     qNo=qNo,
                     status=status,
-                    day=day
+                    day=day,
+                    # is_answered = '0'
                 )
                 db.session.add(record)
                 db.session.commit()
@@ -196,7 +198,7 @@ def submitData():
                 document.getElementById("email").innerHTML = email;
                 document.getElementById("mobile").innerHTML = mobile;
                 // disp = false
-                console.log("Success:", mobile);
+                console.log("Success:", result);
             } catch (error) {
                 console.error("Error:", error);
             }

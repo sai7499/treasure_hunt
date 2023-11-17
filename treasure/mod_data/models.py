@@ -24,4 +24,10 @@ class QualifedStudents(Base):
     email = db.Column(db.String(64), nullable=False)
     day = db.Column(db.String(64), nullable=False)
     url = db.Column(db.String(64), nullable=False)
+    # is_answered = db.Column(db.Boolean, unique=False, default=False)
 
+class Sentence(Base):
+    __tablename__ = 'sentence'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    day =  db.Column(db.String(64), nullable=False)
+    sentence = db.Column(db.String(64), nullable=False)
