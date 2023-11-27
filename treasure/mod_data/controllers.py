@@ -25,6 +25,7 @@ def submitData():
             email = request.form['email']
             qNo = int(request.form['qNo'])
             status = request.form['status']
+            is_answered = '0'
 
             if qNo < 10 or qNo == 10:
                 day = "DAY_1"
@@ -69,7 +70,7 @@ def submitData():
                     qNo=qNo,
                     status=status,
                     day=day,
-                    # is_answered = '0'
+                    is_answered = is_answered
                 )
                 db.session.add(record)
                 db.session.commit()

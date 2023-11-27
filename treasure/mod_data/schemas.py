@@ -24,7 +24,7 @@ class QualifedStudentsSchema(SQLAlchemySchema):
     email = auto_field()
     day = auto_field()
     url = auto_field()
-    # is_answered = auto_field()
+    is_answered = auto_field()
 
         
 class SentenceSchema(SQLAlchemySchema):
